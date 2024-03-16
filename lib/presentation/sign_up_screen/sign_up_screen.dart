@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:get/get.dart';
+import 'package:skys_s_cleanexpress/controllers/auth/sing_in_controller.dart';
 import 'package:skys_s_cleanexpress/widgets/app_bar/custom_app_bar.dart';
 import 'package:skys_s_cleanexpress/widgets/app_bar/appbar_leading_image.dart';
 import 'package:skys_s_cleanexpress/widgets/app_bar/appbar_title.dart';
@@ -12,14 +16,18 @@ import 'package:skys_s_cleanexpress/core/app_export.dart';
 // ignore_for_file: must_be_immutable
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({Key? key}) : super(key: key);
-
-  TextEditingController fullNameController = TextEditingController();
+  final UserController userController = Get.find();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
 
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
 
-  TextEditingController confirmpasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   bool checkmark = false;
 
@@ -43,7 +51,15 @@ class SignUpScreen extends StatelessWidget {
                               _buildSeventeen(context),
                               Column(children: [
                                 SizedBox(height: 12.v),
-                                _buildFullName(context),
+                                _buildFirstName(context),
+                                SizedBox(height: 18.v),
+                                _buildLastName(context),
+                                SizedBox(height: 18.v),
+                                _buildAge(context),
+                                SizedBox(height: 18.v),
+                                _buildPhoneNumber(context),
+                                SizedBox(height: 18.v),
+                                _buildUserName(context),
                                 SizedBox(height: 18.v),
                                 _buildEmail(context),
                                 SizedBox(height: 18.v),
@@ -201,14 +217,60 @@ class SignUpScreen extends StatelessWidget {
   }
 
   /// Section Widget
-  Widget _buildFullName(BuildContext context) {
+  Widget _buildFirstName(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: 27.h, right: 33.h),
         child: CustomFloatingTextField(
-            controller: fullNameController,
-            labelText: "Full Name",
+            controller: firstNameController,
+            labelText: "first Name",
             labelStyle: CustomTextStyles.bodyMediumGray500,
-            hintText: "Full Name",
+            hintText: "first Name",
+            hintStyle: CustomTextStyles.bodyMediumGray500));
+  }
+
+  Widget _buildLastName(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 27.h, right: 33.h),
+        child: CustomFloatingTextField(
+            controller: lastNameController,
+            labelText: "Last Name",
+            labelStyle: CustomTextStyles.bodyMediumGray500,
+            hintText: "Last Name",
+            hintStyle: CustomTextStyles.bodyMediumGray500));
+  }
+
+  Widget _buildUserName(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 27.h, right: 33.h),
+        child: CustomFloatingTextField(
+            controller: userNameController,
+            labelText: "User Name",
+            labelStyle: CustomTextStyles.bodyMediumGray500,
+            hintText: "User Name",
+            hintStyle: CustomTextStyles.bodyMediumGray500));
+  }
+
+  Widget _buildPhoneNumber(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 27.h, right: 33.h),
+        child: CustomFloatingTextField(
+            controller: phoneNumberController,
+            textInputType: TextInputType.phone,
+            labelText: "Phone Number",
+            labelStyle: CustomTextStyles.bodyMediumGray500,
+            hintText: "Phone Number",
+            hintStyle: CustomTextStyles.bodyMediumGray500));
+  }
+
+  Widget _buildAge(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(left: 27.h, right: 33.h),
+        child: CustomFloatingTextField(
+            controller: ageController,
+            // textInputType: TextInputType.datetime,
+            labelText: "Age",
+            labelStyle: CustomTextStyles.bodyMediumGray500,
+            hintText: "Age",
             hintStyle: CustomTextStyles.bodyMediumGray500));
   }
 
@@ -250,7 +312,7 @@ class SignUpScreen extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.only(left: 27.h, right: 33.h),
         child: CustomFloatingTextField(
-            controller: confirmpasswordController,
+            controller: confirmPasswordController,
             labelText: "Confirm Password",
             labelStyle: CustomTextStyles.bodyMediumBluegray200,
             hintText: "Confirm Password",
@@ -286,7 +348,47 @@ class SignUpScreen extends StatelessWidget {
   /// Section Widget
   Widget _buildSignUp(BuildContext context) {
     return CustomElevatedButton(
-        text: "Sign up", margin: EdgeInsets.only(left: 38.h, right: 37.h));
+      text: "Sign up",
+      margin: EdgeInsets.only(left: 38.h, right: 37.h),
+      onPressed: () {
+        userController.user.value = User(
+            firstName: firstNameController.text,
+            lastName: lastNameController.text,
+            userName: userNameController.text,
+            email: emailController.text,
+            phoneNumber: '${phoneNumberController.text.toString()}',
+            userState: 1,
+            age: 23,
+            roles: ['user'],
+            addresses: Address(
+                location: 'testUserApp',
+                longitude: 12.24,
+                latitude: 15.23,
+                description: 'testUserApp'),
+            password: passwordController.text,
+            confirmPassword: confirmPasswordController.text);
+
+        // var data = jsonEncode(<String, dynamic>{
+        //   'firstName': firstNameController.text,
+        //   'lastName': lastNameController.text,
+        //   'userName': userNameController.text,
+        //   'email': emailController.text,
+        //   'phoneNumber': phoneNumberController.text,
+        //   'userState': 1,
+        //   'age': 23,
+        //   'roles': ['user'],
+        //   'addresses': jsonEncode(<String, dynamic>{
+        //     'location': 'testUserApp',
+        //     'longitude': 12.24,
+        //     'latitude': 15.23,
+        //     'description': 'testUserApp'
+        //   }),
+        //   'password': passwordController.text,
+        //   'confirmPassword': confirmPasswordController.text
+        // });
+        userController.createUser();
+      },
+    );
   }
 
   /// Navigates back to the previous screen.
